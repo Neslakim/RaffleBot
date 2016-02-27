@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+
+<HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1" fx:controller="no.sebmik.Controller">
+   <ScrollPane fx:id="scroll" fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER">
+      <TextArea fx:id="main" editable="false" prefHeight="600.0" prefWidth="500.0" wrapText="true" />
+   </ScrollPane>
+   <Pane layoutX="500.0" prefHeight="600.0" prefWidth="300.0">
+      <TextField fx:id="name" layoutX="25.0" layoutY="15.0" prefWidth="250.0" promptText="Name" />
+      <TextField fx:id="oauth" layoutX="25.0" layoutY="50.0" prefWidth="250.0" promptText="OAuth token" />
+      <Button fx:id="connect" layoutX="25.0" layoutY="90.0" mnemonicParsing="false" onAction="#connect" text="Connect" />
+      <Separator layoutY="130.0" prefWidth="300.0" />
+      <ToggleButton layoutX="25.0" layoutY="145.0" mnemonicParsing="false" onAction="#forsen" prefWidth="70.0" text="Forsen" />
+      <Label fx:id="forsenLabel" layoutX="150.0" layoutY="150.0" text="Not connected" textFill="RED" />
+      <ToggleButton layoutX="25.0" layoutY="185.0" mnemonicParsing="false" onAction="#pajlada" prefWidth="70.0" text="Pajlada" />
+      <Label fx:id="pajLabel" layoutX="150.0" layoutY="190.0" text="Not connected" textFill="RED" />
+      <Separator layoutY="230.0" prefWidth="300.0" />
+      <CheckBox fx:id="autoRoulette" layoutX="25.0" layoutY="245.0" mnemonicParsing="false" onAction="#setAutoRoulette" text="Auto roulette" />
+      <Label fx:id="connectionstatus" layoutX="150.0" layoutY="95.0" text="Not connected" textFill="RED" />
+      <TextField fx:id="winMessage" layoutX="85.0" layoutY="275.0" prefHeight="26.0" prefWidth="190.0" promptText="Win message" />
+      <Button layoutX="25.0" layoutY="275.0" mnemonicParsing="false" onAction="#setWinMessage" text="Save" />
+   </Pane>
+</HBox>
