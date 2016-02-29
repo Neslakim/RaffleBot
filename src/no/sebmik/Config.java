@@ -7,11 +7,13 @@ import java.io.*;
 import java.util.Properties;
 
 public class Config {
-    private Logger log = LoggerFactory.getLogger(RaffleBot.class);
-    public String botName;
+    private final Logger log = LoggerFactory.getLogger(RaffleBot.class);
+    public String name;
     public String oauth;
     public String winMessage;
     public boolean autoRoulette;
+    public boolean autoJoinRaffle;
+    public boolean showLinks;
     private static final String filename = "bot.cfg";
 
     public Config() {
@@ -21,20 +23,15 @@ public class Config {
         }
     }
 
-    public Config(String bn, String oa, String wm, boolean ar) {
-        this.botName = bn;
-        this.oauth = oa;
-        this.winMessage = (wm != null && wm.length() > 0) ? wm : "";
-        this.autoRoulette = ar;
-    }
-
-    public void save() {
+    private void save() {
         try {
             Properties p = new Properties();
-            p.setProperty("botname", botName);
+            p.setProperty("botname", name);
             p.setProperty("oauth", oauth);
             p.setProperty("win-message", winMessage);
             p.setProperty("auto-roulette", String.valueOf(autoRoulette));
+            p.setProperty("auto-join-raffle", String.valueOf(autoJoinRaffle));
+            p.setProperty("show-links", String.valueOf(showLinks));
             p.store(new FileWriter(filename), null);
         } catch (IOException e) {
             log.error(e.toString());
@@ -45,18 +42,20 @@ public class Config {
         Properties p = new Properties();
         try (InputStream i = new FileInputStream(filename)) {
             p.load(i);
-            botName = p.getProperty("botname");
+            name = p.getProperty("botname");
             oauth = p.getProperty("oauth");
             winMessage = p.getProperty("win-message");
             autoRoulette = Boolean.parseBoolean(p.getProperty("auto-roulette"));
+            autoJoinRaffle = Boolean.parseBoolean(p.getProperty("auto-join-raffle"));
+            showLinks = Boolean.parseBoolean(p.getProperty("show-links"));
             i.close();
         } catch (IOException e) {
             log.error(e.toString());
         }
     }
 
-    public void setBotName(String botName) {
-        this.botName = botName;
+    public void setName(String name) {
+        this.name = name;
         save();
     }
 
@@ -73,5 +72,19 @@ public class Config {
     public void setAutoRoulette(boolean autoRoulette) {
         this.autoRoulette = autoRoulette;
         save();
+    }
+
+    public void setAutoJoinRaffle(boolean autoJoinRaffle) {
+        this.autoJoinRaffle = autoJoinRaffle;
+        save();
+    }
+
+    public void setShowLinks(boolean l) {
+        this.showLinks = l;
+        save();
+    }
+
+    public boolean validNameAndToken() {
+        return name.length() > 0 && oauth.length() == 36 && oauth.contains("oauth:");
     }
 }

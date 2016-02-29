@@ -11,7 +11,7 @@ import javafx.stage.Stage;
 
 import java.io.*;
 
-public class RaffleBot extends Application {
+class RaffleBot extends Application {
 
     public static void main(String[] args) {
         launch(args);
@@ -38,8 +38,8 @@ public class RaffleBot extends Application {
         root.setLevel(Level.ERROR);
         try {
             PrintStream printStream = new PrintStream(new BufferedOutputStream(new FileOutputStream("rafflebot.log", true)));
-            System.setOut(printStream);
-            System.setErr(printStream);
+//            System.setOut(printStream);
+//            System.setErr(printStream);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
