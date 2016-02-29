@@ -19,11 +19,9 @@ class Spam {
                 }
 //                channel.send().message(message + " " + c++);
                 if (b) {
-                    System.out.println(message + " .");
                     channel.send().message(message + " .");
                     b = !b;
                 } else {
-                    System.out.println(message);
                     channel.send().message(message);
                     b = !b;
                 }

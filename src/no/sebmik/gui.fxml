@@ -52,7 +52,7 @@
                     <Button layoutX="230.0" layoutY="35.0" mnemonicParsing="false" onAction="#forsenAllIn" text="All-in" />
                     <Label fx:id="raffleTextForsen" layoutX="25.0" maxWidth="190.0" text="No raffle is running">
                         <font>
-                            <Font size="18.0" />
+                            <Font size="14.0" />
                         </font>
                     </Label>
                     <Label fx:id="raffleTimeForsen" layoutX="220.0" prefWidth="50.0" textFill="BLUE" visible="false">
@@ -61,7 +61,7 @@
                         </font>
                     </Label>
                     <TextField fx:id="spamTextForsen" layoutX="25.0" layoutY="75.0" prefHeight="26.0" prefWidth="190.0" promptText="Message" />
-                    <Button layoutX="230.0" layoutY="75.0" mnemonicParsing="false" onAction="#spamForsen" text="Spam" fx:id="forsenSpamButton"/>
+                    <Button fx:id="forsenSpamButton" layoutX="230.0" layoutY="75.0" mnemonicParsing="false" onAction="#spamForsen" text="Spam" />
                 </Pane>
                 <Separator prefHeight="3.0" prefWidth="300.0" />
             </VBox>
@@ -82,7 +82,7 @@
 
                     <Label fx:id="raffleTextPajlada" layoutX="25.0" maxWidth="190.0" text="No raffle is running">
                         <font>
-                            <Font size="18.0" />
+                            <Font size="14.0" />
                         </font>
                     </Label>
                     <Label fx:id="raffleTimePajlada" layoutX="220.0" prefWidth="50.0" textAlignment="CENTER" textFill="BLUE" visible="false">
@@ -91,7 +91,7 @@
                         </font>
                     </Label>
                     <TextField fx:id="spamTextPajlada" layoutX="25.0" layoutY="75.0" prefHeight="26.0" prefWidth="190.0" promptText="Message" />
-                    <Button layoutX="230.0" layoutY="75.0" mnemonicParsing="false" onAction="#spamPajlada" text="Spam" fx:id="pajladaSpamButton"/>
+                    <Button fx:id="pajladaSpamButton" layoutX="230.0" layoutY="75.0" mnemonicParsing="false" onAction="#spamPajlada" text="Spam" />
                 </Pane>
                 <Separator prefHeight="3.0" prefWidth="300.0" />
             </VBox>

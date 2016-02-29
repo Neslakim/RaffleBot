@@ -11,7 +11,7 @@ import javafx.stage.Stage;
 
 import java.io.*;
 
-class RaffleBot extends Application {
+public class RaffleBot extends Application {
 
     public static void main(String[] args) {
         launch(args);

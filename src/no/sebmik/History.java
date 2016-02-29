@@ -7,7 +7,7 @@ public class History {
     private Node last;
 
     public History(int cap) {
-        this.capacity = cap;
+        this.capacity = (int) (cap * 0.8);
         size = 0;
         first = null;
         last = null;
@@ -66,7 +66,7 @@ public class History {
         if (size < capacity) {
             return 1250;
         } else {
-            return System.currentTimeMillis() - getMessageTime(size - capacity);
+            return 30000 - (System.currentTimeMillis() - getMessageTime(size - capacity));
         }
     }
 }

@@ -246,6 +246,8 @@ public class Controller implements Initializable {
                 addTextToMain("Disconnected from server", null);
                 setForsenStatus(false);
                 setPajladaStatus(false);
+                forsenSpam.stop();
+                pajladaSpam.stop();
             }
         });
     }
@@ -259,6 +261,7 @@ public class Controller implements Initializable {
                 addTextToMain("Joined #forsenlol", "forsen");
             } else {
                 connectForsen.setText("Connect");
+                connectForsen.setSelected(false);
                 addTextToMain("Left #forsenlol", "forsen");
             }
         });
@@ -273,6 +276,7 @@ public class Controller implements Initializable {
                 addTextToMain("Joined #pajlada", "pajlada");
             } else {
                 connectPajlada.setText("Connect");
+                connectPajlada.setSelected(false);
                 addTextToMain("Left #pajlada", "pajlada");
             }
         });
@@ -445,5 +449,10 @@ public class Controller implements Initializable {
             pajladaSpamButton.setText("Spam");
             pajladaSpam.stop();
         }
+    }
+
+    public static void main(String[] args) {
+        Spam spam = new Spam("asd", null, new History(20));
+        spam.start();
     }
 }
