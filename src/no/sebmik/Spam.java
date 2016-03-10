@@ -1,28 +1,30 @@
 package no.sebmik;
 
-import org.pircbotx.Channel;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
-class Spam {
+public class Spam {
     private final Thread thread;
     boolean running;
 
-    public Spam(String message, Channel channel, History history) {
+    public Spam(String message, String var, Listener listener, History history) {
         thread = new Thread(() -> {
-            int c = 1;
             boolean b = true;
             while (running) {
                 long wait = history.getTimeToWait();
+                System.out.println(String.format("[%s] %s", getTime(), wait));
                 try {
                     Thread.sleep(wait);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-//                channel.send().message(message + " " + c++);
-                if (b) {
-                    channel.send().message(message + " .");
-                    b = !b;
-                } else {
-                    channel.send().message(message);
+                if (running && listener != null) {
+                    if (b) {
+                        listener.sendMessageWithoutWait(message + " " + var);
+                    } else {
+                        listener.sendMessageWithoutWait(message);
+                    }
                     b = !b;
                 }
             }
@@ -39,13 +41,14 @@ class Spam {
     }
 
     public static void main(String[] args) {
-        Spam spam = new Spam("asd", null, new History(20));
+        Spam spam = new Spam("asd", ".", null, new History(20));
         spam.start();
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        spam.stop();
+    }
+
+    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+
+    public String getTime() {
+        Calendar cal = Calendar.getInstance();
+        return dateFormat.format(cal.getTime());
     }
 }

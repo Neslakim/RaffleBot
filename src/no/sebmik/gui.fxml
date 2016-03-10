@@ -1,100 +1,163 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.CheckBox?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.Separator?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.ToggleButton?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Pane?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
-<?import javafx.scene.text.TextFlow?>
-
-<HBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/null" xmlns:fx="http://javafx.com/fxml/1" fx:controller="no.sebmik.Controller">
-    <ScrollPane fx:id="scroll" fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER">
-        <TextFlow fx:id="main" prefHeight="600.0" prefWidth="500.0">
-        </TextFlow>
-    </ScrollPane>
-    <Pane layoutX="500.0" prefHeight="600.0" prefWidth="300.0">
-        <ToggleButton fx:id="connect" layoutX="95.0" layoutY="15.0" mnemonicParsing="false" onAction="#connect" text="Connect" />
-        <Separator layoutY="150.0" prefWidth="300.0" />
-
-
-        <CheckBox fx:id="autoRoulette" layoutX="160.0" layoutY="70.0" mnemonicParsing="false" onAction="#setAutoRoulette" text="Roulette on win" />
-        <Label fx:id="connectionstatus" layoutX="185.0" layoutY="20.0" prefWidth="95.0" text="Not connected" textAlignment="RIGHT" textFill="RED" />
-        <TextField fx:id="winMessage" layoutX="25.0" layoutY="105.0" prefHeight="26.0" prefWidth="190.0" promptText="Win message" />
-        <Button layoutX="230.0" layoutY="105.0" mnemonicParsing="false" onAction="#setWinMessage" text="Save" />
-        <Button layoutX="25.0" layoutY="15.0" mnemonicParsing="false" onAction="#loginDialog" text="Login" />
-
-        <Separator layoutY="55.0" prefHeight="3.0" prefWidth="300.0" />
-        <CheckBox fx:id="autoJoinRaffle" layoutX="15.0" layoutY="70.0" mnemonicParsing="false" onAction="#setAutoJoinRaffle" text="Auto join raffles" />
-
-        <VBox layoutY="150.0">
-            <VBox layoutX="0.0">
-                <Pane prefHeight="40.0">
-                    <Label fx:id="forsenLabel" layoutX="25.0" layoutY="5.0" text="Forsen" />
-                    <ToggleButton fx:id="connectForsen" layoutX="110.0" mnemonicParsing="false" onAction="#forsen" prefWidth="100.0" text="Connect" />
-                    <opaqueInsets>
-                        <Insets />
-                    </opaqueInsets>
+<HBox fx:id="root" stylesheets="@../../resources/dark.css" xmlns="http://javafx.com/javafx/null"
+      xmlns:fx="http://javafx.com/fxml/1" fx:controller="no.sebmik.Controller">
+    <VBox HBox.hgrow="ALWAYS">
+        <ScrollPane fx:id="scroll" fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" pannable="true"
+                    vbarPolicy="ALWAYS" VBox.vgrow="ALWAYS">
+            <content>
+                <FlowPane fx:id="main" prefWidth="640.0" rowValignment="TOP"/>
+            </content>
+        </ScrollPane>
+        <Pane maxHeight="80.0" minHeight="85.0" prefHeight="85.0" prefWidth="640.0"
+              VBox.vgrow="ALWAYS">
+            <TextArea fx:id="textInput" layoutX="15.0" layoutY="10.0" prefRowCount="3" promptText="Send a message"
+                      wrapText="true"/>
+            <Button fx:id="spamButton" layoutX="575.0" layoutY="10.0" mnemonicParsing="false" onAction="#spam"
+                    prefWidth="60.0" text="Spam"/>
+            <Button layoutX="575.0" layoutY="47.0" mnemonicParsing="false" onAction="#message" prefWidth="60.0"
+                    text="Send"/>
+            <Separator layoutX="649.0" orientation="VERTICAL" prefHeight="85.0" prefWidth="1.0"/>
+        </Pane>
+    </VBox>
+    <VBox fx:id="rightPane" maxHeight="Infinity" prefHeight="591.0" prefWidth="300.0">
+        <TitledPane expanded="true" text="Connection">
+            <VBox prefWidth="300.0">
+                <Pane prefWidth="300.0">
+                    <children>
+                        <Button fx:id="connect" layoutX="75.0" mnemonicParsing="false" onAction="#connect"
+                                text="Connect"/>
+                        <Label fx:id="connectionstatus" layoutX="165.0" layoutY="5.0" prefWidth="95.0"
+                               text="Not connected" textAlignment="RIGHT"/>
+                        <Button layoutX="5.0" mnemonicParsing="false" onAction="#loginDialog" text="Login"/>
+                    </children>
+                </Pane>
+                <Separator prefWidth="200.0">
+                    <padding>
+                        <Insets left="15.0" right="15.0"/>
+                    </padding>
                     <VBox.margin>
-                        <Insets top="15.0" />
+                        <Insets bottom="10.0" top="10.0"/>
                     </VBox.margin>
+                </Separator>
+                <Pane>
+                    <children>
+                        <Button fx:id="connectChannel" layoutX="185.0" mnemonicParsing="false"
+                                onAction="#connectChannel" text="Connect"/>
+                        <TextField fx:id="channelNameInput" layoutX="5.0" prefWidth="160.0"
+                                   promptText="Connect to channel"/>
+                    </children>
                 </Pane>
-                <Pane fx:id="forsenPane" managed="false" prefHeight="115.0" prefWidth="300.0" visible="false">
-                    <Label layoutX="25.0" layoutY="40.0" text="Roulette" />
-                    <TextField fx:id="forsenRouletteText" layoutX="90.0" layoutY="35.0" prefColumnCount="4" />
-                    <Button layoutX="170.0" layoutY="35.0" mnemonicParsing="false" onAction="#forsenRoulette" text="Send" />
-                    <Button layoutX="230.0" layoutY="35.0" mnemonicParsing="false" onAction="#forsenAllIn" text="All-in" />
-                    <Label fx:id="raffleTextForsen" layoutX="25.0" maxWidth="190.0" text="No raffle is running">
-                        <font>
-                            <Font size="14.0" />
-                        </font>
-                    </Label>
-                    <Label fx:id="raffleTimeForsen" layoutX="220.0" prefWidth="50.0" textFill="BLUE" visible="false">
-                        <font>
-                            <Font name="System Bold" size="18.0" />
-                        </font>
-                    </Label>
-                    <TextField fx:id="spamTextForsen" layoutX="25.0" layoutY="75.0" prefHeight="26.0" prefWidth="190.0" promptText="Message" />
-                    <Button fx:id="forsenSpamButton" layoutX="230.0" layoutY="75.0" mnemonicParsing="false" onAction="#spamForsen" text="Spam" />
-                </Pane>
-                <Separator prefHeight="3.0" prefWidth="300.0" />
             </VBox>
+        </TitledPane>
+        <TitledPane text="Settings">
+            <VBox>
+                <Pane>
+                    <CheckBox fx:id="autoRoulette" layoutX="150.0" layoutY="75.0" mnemonicParsing="false"
+                              onAction="#setAutoRoulette" text="Roulette on win"/>
+                    <CheckBox fx:id="autoJoinRaffle" layoutY="75.0" mnemonicParsing="false"
+                              onAction="#setAutoJoinRaffle" text="Autojoin raffles"/>
+                    <CheckBox layoutY="50.0" mnemonicParsing="false" onAction="#overlay" text="Emote overlay"/>
+                    <CheckBox fx:id="mentions" layoutX="150.0" mnemonicParsing="false" onAction="#setMentions"
+                              text="Mentions"/>
+                    <CheckBox fx:id="bttvOverlayCB" disable="true" layoutX="150.0" layoutY="50.0"
+                              mnemonicParsing="false" onAction="#bttvOverlay" text="BTTV Emotes"/>
+                    <CheckBox fx:id="allMessages" mnemonicParsing="false" onAction="#setAllMessages"
+                              text="All Messages"/>
+                    <CheckBox fx:id="filter" layoutY="25.0" mnemonicParsing="false" onAction="#setFilter"
+                              text="Chat filters"/>
+                    <CheckBox fx:id="whispers" layoutX="150.0" layoutY="25.0" mnemonicParsing="false"
+                              onAction="#setWhispers" text="Whispers"/>
+                    <CheckBox fx:id="darkMode" layoutY="100.0" mnemonicParsing="false" onAction="#darkMode"
+                              text="Dark Mode"/>
+                </Pane>
 
-            <VBox layoutX="0.0">
-                <Pane prefHeight="40.0">
-                    <Label fx:id="pajLabel" layoutX="25.0" layoutY="5.0" text="Pajlada" />
-                    <ToggleButton fx:id="connectPajlada" layoutX="110.0" layoutY="0.0" mnemonicParsing="false" onAction="#pajlada" prefWidth="100.0" text="Connect" />
+                <Separator prefWidth="300.0">
+                    <padding>
+                        <Insets left="15.0" right="15.0"/>
+                    </padding>
                     <VBox.margin>
-                        <Insets top="15.0" />
+                        <Insets bottom="10.0" top="10.0"/>
                     </VBox.margin>
+                </Separator>
+                <Pane prefWidth="300.0">
+                    <TextField fx:id="downloadEmotes" layoutX="5.0" prefWidth="170.0" promptText="Download emotes"/>
+                    <Button layoutX="185.0" mnemonicParsing="false" onAction="#downloadEmotes" prefWidth="90.0"
+                            text="Download"/>
                 </Pane>
-                <Pane fx:id="pajPane" managed="false" prefHeight="115.0" prefWidth="300.0" visible="false">
-                    <Label layoutX="25.0" layoutY="40.0" text="Roulette" />
-                    <TextField fx:id="pajladaRouletteText" layoutX="90.0" layoutY="35.0" prefColumnCount="4" />
-                    <Button layoutX="170.0" layoutY="35.0" mnemonicParsing="false" onAction="#pajladaRoulette" text="Send" />
-                    <Button layoutX="230.0" layoutY="35.0" mnemonicParsing="false" onAction="#pajladaAllIn" text="All-in" />
-
-                    <Label fx:id="raffleTextPajlada" layoutX="25.0" maxWidth="190.0" text="No raffle is running">
-                        <font>
-                            <Font size="14.0" />
-                        </font>
-                    </Label>
-                    <Label fx:id="raffleTimePajlada" layoutX="220.0" prefWidth="50.0" textAlignment="CENTER" textFill="BLUE" visible="false">
-                        <font>
-                            <Font name="System Bold" size="18.0" />
-                        </font>
-                    </Label>
-                    <TextField fx:id="spamTextPajlada" layoutX="25.0" layoutY="75.0" prefHeight="26.0" prefWidth="190.0" promptText="Message" />
-                    <Button fx:id="pajladaSpamButton" layoutX="230.0" layoutY="75.0" mnemonicParsing="false" onAction="#spamPajlada" text="Spam" />
-                </Pane>
-                <Separator prefHeight="3.0" prefWidth="300.0" />
             </VBox>
-        </VBox>
-    </Pane>
+        </TitledPane>
+        <TitledPane expanded="true" text="Controls">
+            <VBox fx:id="channelContent" prefWidth="300.0">
+                <Pane prefWidth="300.0">
+                    <Label fx:id="raffleText" layoutX="5.0" text="No raffle is running">
+                        <font>
+                            <Font name="System Bold" size="14.0"/>
+                        </font>
+                    </Label>
+                    <Label fx:id="raffleTime" layoutX="240.0" prefWidth="40.0">
+                        <font>
+                            <Font name="System Bold" size="18.0"/>
+                        </font>
+                    </Label>
+                </Pane>
+                <Separator prefWidth="200.0">
+                    <padding>
+                        <Insets left="5.0" right="5.0"/>
+                    </padding>
+                    <VBox.margin>
+                        <Insets bottom="10.0" top="10.0"/>
+                    </VBox.margin>
+                </Separator>
+                <Pane prefWidth="300.0">
+                    <Label layoutX="5.0" layoutY="5.0" text="Roulette"/>
+                    <TextField fx:id="rouletteText" layoutX="70.0" prefColumnCount="4" prefWidth="60.0"
+                               promptText="Points"/>
+                    <Button layoutX="145.0" mnemonicParsing="false" onAction="#roulette" prefWidth="60.0"
+                            text="Play"/>
+                    <Button layoutX="215.0" mnemonicParsing="false" onAction="#allIn" prefWidth="60.0"
+                            text="All-in"/>
+                </Pane>
+                <Separator prefWidth="200.0">
+                    <padding>
+                        <Insets left="5.0" right="5.0"/>
+                    </padding>
+                    <VBox.margin>
+                        <Insets bottom="10.0" top="10.0"/>
+                    </VBox.margin>
+                </Separator>
+                <Pane prefWidth="300.0">
+                    <TextField fx:id="betPoints" layoutX="50.0" prefWidth="80.0" promptText="Points"/>
+                    <Button layoutX="145.0" mnemonicParsing="false" onAction="#betWin" prefWidth="60.0" text="Win"/>
+                    <Button layoutX="215.0" mnemonicParsing="false" onAction="#betLose" prefWidth="60.0"
+                            text="Lose"/>
+                    <Label layoutX="5.0" layoutY="5.0" text="Bet"/>
+                </Pane>
+                <Separator prefWidth="200.0">
+                    <padding>
+                        <Insets left="5.0" right="5.0"/>
+                    </padding>
+                    <VBox.margin>
+                        <Insets bottom="10.0" top="10.0"/>
+                    </VBox.margin>
+                </Separator>
+                <Pane prefWidth="300.0">
+                    <TextField fx:id="duelName" layoutX="50.0" prefWidth="155.0" promptText="Name"/>
+                    <TextField fx:id="duelPoints" layoutX="215.0" prefColumnCount="3" prefWidth="60.0"
+                               promptText="Points"/>
+                    <Button layoutX="215.0" layoutY="40.0" onAction="#duel" prefWidth="60.0" text="Duel"/>
+                    <Button layoutX="50.0" layoutY="40.0" mnemonicParsing="false" onAction="#acceptDuel"
+                            prefWidth="70.0" text="Accept"/>
+                    <Button layoutX="135.0" layoutY="40.0" mnemonicParsing="false" onAction="#cancelDuel"
+                            prefWidth="70.0" text="Cancel"/>
+                    <Label layoutX="5.0" layoutY="24.0" text="Duel"/>
+                </Pane>
+            </VBox>
+            <!--<Separator prefHeight="3.0" prefWidth="300.0" />-->
+        </TitledPane>
+    </VBox>
 </HBox>

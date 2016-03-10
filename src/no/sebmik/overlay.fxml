@@ -1,0 +1,5 @@
+<?import javafx.scene.layout.Pane?>
+<Pane fx:id="overlayPane"
+      xmlns:fx="http://javafx.com/fxml" style="-fx-background-color: transparent;" mouseTransparent="true"
+      prefWidth="Infinity" prefHeight="Infinity">
+</Pane>

@@ -7,7 +7,7 @@ public class History {
     private Node last;
 
     public History(int cap) {
-        this.capacity = (int) (cap * 0.8);
+        this.capacity = (int) (cap * 0.9);
         size = 0;
         first = null;
         last = null;
@@ -50,22 +50,31 @@ public class History {
     }
 
     private void removeOutdated() {
-        while (System.currentTimeMillis() - first.time > 30000) {
-            first = first.next;
-            size--;
+        for (int i = 0; i < size; i++) {
+            if (System.currentTimeMillis() - first.time >= 30000) {
+                first = first.next;
+                size--;
+            } else {
+                break;
+            }
         }
     }
 
     public long getTimeToWait() {
-        if (size == 0) {
+        if (isEmpty()) {
             add(System.currentTimeMillis());
             return 0;
         }
         removeOutdated();
-        add(System.currentTimeMillis());
-        if (size < capacity) {
-            return 1250;
+        if (size == 0 || last == null || first == null) {
+            return 0;
+        }
+        if (size <= capacity) {
+            long l = System.currentTimeMillis() - last.time;
+            add(System.currentTimeMillis());
+            return l > 1150 || l < 0 ? 0 : 1100;
         } else {
+            add(System.currentTimeMillis());
             return 30000 - (System.currentTimeMillis() - getMessageTime(size - capacity));
         }
     }
