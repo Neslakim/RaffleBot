@@ -13,7 +13,7 @@
                 <FlowPane fx:id="main" prefWidth="640.0" rowValignment="TOP"/>
             </content>
         </ScrollPane>
-        <Pane maxHeight="80.0" minHeight="85.0" prefHeight="85.0" prefWidth="640.0"
+        <Pane fx:id="textInputPane" maxHeight="80.0" minHeight="85.0" prefHeight="85.0" prefWidth="640.0"
               VBox.vgrow="ALWAYS">
             <TextArea fx:id="textInput" layoutX="15.0" layoutY="10.0" prefRowCount="3" promptText="Send a message"
                       wrapText="true"/>

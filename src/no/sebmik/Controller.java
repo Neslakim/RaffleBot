@@ -367,12 +367,7 @@ public class Controller implements Initializable {
                 connectChannel();
             }
         });
-//        if (config.darkMode) {
-//            scroll.setStyle("-fx-background: #343434;-fx-background-insets: 0;-fx-padding: 0;");
-//            textInput.setStyle("-fx-control-inner-background: #141414;-fx-prompt-text-fill: #D3D3D3;-fx-background-color: #333;-fx-border-radius: 0");
-//            textInput.getParent().setStyle("-fx-background-color: #333");
-//            textInputPane.setStyle("-fx-background-color: #282828");
-//        }
+        setDarkMode(config.darkMode);
     }
 
     private void loadBotBadge() {
@@ -700,12 +695,7 @@ public class Controller implements Initializable {
     public void darkMode(ActionEvent event) {
         CheckBox cb = (CheckBox) event.getSource();
         config.setDarkMode(cb.isSelected());
-        if (config.darkMode) {
-            root.getStylesheets().clear();
-            root.getStylesheets().add("/resources/dark.css");
-        } else {
-            root.getStylesheets().clear();
-        }
+        setDarkMode(cb.isSelected());
         for (Node node : main.getChildren()) {
             if (node.getStyle().contains("-fx-background-color: #343434")) {
                 node.setStyle("-fx-background-color: #F4F4F4");
@@ -716,14 +706,29 @@ public class Controller implements Initializable {
             } else if (node.getStyle().contains("-fx-background-color: #D3D3D3")) {
                 node.setStyle("-fx-background-color: #1E1E1E");
             }
-            // TODO Exclude timestamp
+            final boolean[] first = {true};
             ((FlowPane) node).getChildren().stream().filter(node2 -> node2 instanceof Text).forEach(node2 -> {
-                if (config.darkMode) {
-                    ((Text) node2).setFill(Color.valueOf("#D3D3D3"));
+                Text text = (Text) node2;
+                if (first[0]) {
+                    first[0] = false;
                 } else {
-                    ((Text) node2).setFill(Color.valueOf("#000"));
+                    if (config.darkMode) {
+                        text.setFill(Color.valueOf("#D3D3D3"));
+                    } else {
+                        text.setFill(Color.valueOf("#000"));
+                    }
                 }
             });
+        }
+    }
+
+    private void setDarkMode(boolean b) {
+        if (b) {
+            root.getStylesheets().clear();
+            root.getStylesheets().add("/resources/dark.css");
+        } else {
+            root.getStylesheets().clear();
+            root.getStylesheets().add("/resources/light.css");
         }
     }
 }

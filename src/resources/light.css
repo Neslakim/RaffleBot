@@ -1,5 +1,5 @@
 * {
-    -fx-text-fill: #D3D3D3;
+    -fx-text-fill: #323232;
     -swatch-100: #BBDEFB;
     -swatch-200: #90CAF9;
     -swatch-300: #64BEF6;
@@ -7,71 +7,14 @@
     -swatch-500: #2196F3;
 }
 
-.button {
-    -fx-background-color: #1E1E1E;
-    -fx-border-color: #343434;
-    -fx-background-insets: 0 0 -1 0, 0, 1, 2;
-    -fx-border-radius: 3px, 3px, 2px, 1px;
-    -fx-background-radius: 3px, 3px, 2px, 1px;
-    -fx-padding: 0.333333em 0.666667em 0.333333em 0.666667em;
-}
-
-.button:hover {
-    -fx-background-color: #1A1E1E1E;
-    -fx-background-insets: 0 0 -1 0, 0, 1, 2;
-    -fx-border-radius: 3px, 3px, 2px, 1px;
-    -fx-background-radius: 3px, 3px, 2px, 1px;
-    -fx-padding: 0.333333em 0.666667em 0.333333em 0.666667em;
-}
-
-.button:focused {
-    -fx-border-color: #000, #000;
-    -fx-border-width: 1, 1;
-    -fx-border-style: solid;
-    -fx-border-radius: 0, 0;
-}
-
-.separator {
-    -fx-opacity: 0.1;
-}
-
-.scroll-pane {
-    -fx-background: #343434;
-    -fx-background-insets: 0;
-    -fx-padding: 0;
-}
-
-.text-field, .text-area {
-    -fx-prompt-text-fill: #D3D3D3;
-    -fx-control-inner-background: #141414;
-    -fx-background-color: #141414;
-    -fx-border-color: #343434;
-    /*-fx-background-insets: 0 0 -1 0, 0, 1, 2;*/
-    -fx-border-radius: 3px, 3px, 2px, 1px;
-    -fx-background-radius: 3px, 3px, 2px, 1px;
-}
-
-#textInputPane {
-    -fx-background-color: #282828;
-}
-
-.titled-pane > *.content {
-    -fx-background-color: #282828;
-}
-
-.titled-pane > .title {
-    -fx-background-color: #1E1E1E;
-}
-
-#rightPane {
-    -fx-background-color: #282828;
-    -fx-box-border: #141414;
-}
+/*.scroll-pane {*/
+    /*-fx-padding: 0;*/
+/*}*/
 
 .scroll-pane .scroll-bar:horizontal .track,
 .scroll-pane .scroll-bar:vertical .track {
-    -fx-background-color: #343434;
-    -fx-border-color: #343434;
+    -fx-background-color: #F4F4F4;
+    -fx-border-color: #F4F4F4;
     -fx-background-radius: 0;
     -fx-border-radius: 2em;
 }
@@ -98,7 +41,7 @@
 
 .scroll-pane .scroll-bar:horizontal .thumb,
 .scroll-pane .scroll-bar:vertical .thumb {
-    -fx-background-color: #D3D3D3;
+    -fx-background-color: derive(black,90%);
     -fx-background-insets: 2, 0, 0;
     -fx-background-radius: 2em;
 }
