@@ -6,6 +6,7 @@ I have a lot of extra time, so I decided to add some more features:
 * Shows messages where you are mentioned.
 * Gamble away your points on roulette easily.
 * Spam feature. Input a message, and it will spam it for you. This includes adding a '.' on every other message, and staying under the rate limit. Not very good or tested at the moment, and I would advise not to type manurally while this is activated. Might fuck up when combined with raffles. Uses include spamming emotes for daily quest, or when going for emote records (continued spam of the same thing).
+
 ## How to use
 1. Go [here](https://twitchapps.com/tmi/) and obtain an oauth token
 2. Download the .jar file from [here](https://github.com/SebMik/RaffleBot/releases)
