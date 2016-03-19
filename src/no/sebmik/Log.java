@@ -1,24 +1,32 @@
 package no.sebmik;
 
 import java.io.*;
+import java.net.URISyntaxException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 public class Log {
-    String className;
+    private final String className;
+    private String path;
 
     public Log(String className) {
         this.className = className;
+        try {
+            String url = getClass().getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
+            path = url.substring(0, url.lastIndexOf("/"));
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
     }
 
     public Log() {
         this("default");
     }
 
-    static DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+    private static final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 
-    public String getTime() {
+    private String getTime() {
         Calendar cal = Calendar.getInstance();
         return dateFormat.format(cal.getTime());
     }
@@ -69,8 +77,8 @@ public class Log {
         }
     }
 
-    public void appendToFile(String s) {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(String.format("log/%s.log", className), true))) {
+    private void appendToFile(String s) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(String.format("%s/log/%s.log", path, className), true))) {
             bw.write(s);
             bw.newLine();
             bw.flush();

@@ -7,11 +7,11 @@ import java.io.*;
 import java.net.URL;
 
 public class Downloader {
-    Log log = new Log(getClass().getSimpleName());
-    private String twitch = "https://static-cdn.jtvnw.net/emoticons/v1/%s/%s";
-    private String bttv = "https://cdn.betterttv.net/emote/%s/%sx";
+    private final Log log = new Log(getClass().getSimpleName());
+    private final String twitch = "https://static-cdn.jtvnw.net/emoticons/v1/%s/%s";
+    private final String bttv = "https://cdn.betterttv.net/emote/%s/%sx";
 
-    public void downloadTwitchEmotes(int size) {
+    void downloadTwitchEmotes(int size) {
         try {
             JSONObject jsonObject = new JSONObject(readUrl("https://twitchemotes.com/api_cache/v2/global.json"));
             JSONObject e = jsonObject.getJSONObject("emotes");
@@ -26,7 +26,7 @@ public class Downloader {
         }
     }
 
-    public void downloadTwitchEmotes(String channelName, int size) {
+    void downloadTwitchEmotes(String channelName, int size) {
         try {
             JSONObject jsonObject = new JSONObject(readUrl("https://twitchemotes.com/api_cache/v2/subscriber.json"));
             JSONObject e = jsonObject.getJSONObject("channels");
@@ -43,7 +43,7 @@ public class Downloader {
         }
     }
 
-    public void downloadBTTVEmotes(int size) {
+    void downloadBTTVEmotes(int size) {
         try {
             JSONObject jsonObject = new JSONObject(readUrl("https://api.betterttv.net/2/emotes"));
             JSONArray e3 = jsonObject.getJSONArray("emotes");
@@ -59,7 +59,7 @@ public class Downloader {
         }
     }
 
-    public void downloadBTTVEmotes(String channel, int size) {
+    void downloadBTTVEmotes(String channel, int size) {
         try {
             JSONObject jsonObject = new JSONObject(readUrl("https://api.betterttv.net/2/channels/" + channel));
             JSONArray e3 = jsonObject.getJSONArray("emotes");
@@ -92,7 +92,7 @@ public class Downloader {
         }
     }
 
-    public void downloadBadge(String channelName) {
+    void downloadBadge(String channelName) {
         try {
             JSONObject jsonObject = new JSONObject(readUrl("https://twitchemotes.com/api_cache/v2/subscriber.json"));
             JSONObject e = jsonObject.getJSONObject("channels");
@@ -104,14 +104,20 @@ public class Downloader {
 
     }
 
-    public String getServerCluster(String channelName) {
+    public String[] getServers(String channelName) {
+        String[] ret = null;
         try {
             JSONObject jsonObject = new JSONObject(readUrl(String.format("http://api.twitch.tv/api/channels/%s/chat_properties", channelName)));
-            return (String) jsonObject.get("cluster");
+            JSONArray arr = jsonObject.getJSONArray("chat_servers");
+            int length = arr.length();
+            ret = new String[length];
+            for (int i = 0; i < length; i++) {
+                ret[i] = arr.optString(i);
+            }
         } catch (Exception e) {
             log.e(e, true);
         }
-        return "";
+        return ret;
     }
 
     private static String readUrl(String urlString) throws Exception {
@@ -119,7 +125,7 @@ public class Downloader {
         try {
             URL url = new URL(urlString);
             reader = new BufferedReader(new InputStreamReader(url.openStream()));
-            StringBuffer buffer = new StringBuffer();
+            StringBuilder buffer = new StringBuilder();
             int read;
             char[] chars = new char[1024];
             while ((read = reader.read(chars)) != -1)

@@ -10,7 +10,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Listener extends ListenerAdapter {
-    Log log = new Log(getClass().getSimpleName());
+    private final Log log = new Log(getClass().getSimpleName());
     private final String[] EVENT_SERVERS = {
             "199.9.255.149:443",
             "192.16.64.181:443",
@@ -22,48 +22,51 @@ public class Listener extends ListenerAdapter {
             "199.9.255.147:443",
             "192.16.64.173:443"
     };
-    private static String[] GROUP_SERVERS = {
+    private static final String[] GROUP_SERVERS = {
             "192.16.64.212",
             "192.16.64.180",
             "199.9.253.119",
             "199.9.253.120"
     };
-    //    private final String urlRegex2= "(?i)\\b((?:https?:(?:/{1,3}|[a-z0-9%])|[a-z0-9.\\-]+[.](?:com|net|org|edu|gov|mil|aero|asia|biz|cat|coop|info|int|jobs|mobi|museum|name|post|pro|tel|travel|xxx|ac|ad|ae|af|ag|ai|al|am|an|ao|aq|ar|as|at|au|aw|ax|az|ba|bb|bd|be|bf|bg|bh|bi|bj|bm|bn|bo|br|bs|bt|bv|bw|by|bz|ca|cc|cd|cf|cg|ch|ci|ck|cl|cm|cn|co|cr|cs|cu|cv|cx|cy|cz|dd|de|dj|dk|dm|do|dz|ec|ee|eg|eh|er|es|et|eu|fi|fj|fk|fm|fo|fr|ga|gb|gd|ge|gf|gg|gh|gi|gl|gm|gn|gp|gq|gr|gs|gt|gu|gw|gy|hk|hm|hn|hr|ht|hu|id|ie|il|im|in|io|iq|ir|is|it|je|jm|jo|jp|ke|kg|kh|ki|km|kn|kp|kr|kw|ky|kz|la|lb|lc|li|lk|lr|ls|lt|lu|lv|ly|ma|mc|md|me|mg|mh|mk|ml|mm|mn|mo|mp|mq|mr|ms|mt|mu|mv|mw|mx|my|mz|na|nc|ne|nf|ng|ni|nl|no|np|nr|nu|nz|om|pa|pe|pf|pg|ph|pk|pl|pm|pn|pr|ps|pt|pw|py|qa|re|ro|rs|ru|rw|sa|sb|sc|sd|se|sg|sh|si|sj|Ja|sk|sl|sm|sn|so|sr|ss|st|su|sv|sx|sy|sz|tc|td|tf|tg|th|tj|tk|tl|tm|tn|to|tp|tr|tt|tv|tw|tz|ua|ug|uk|us|uy|uz|va|vc|ve|vg|vi|vn|vu|wf|ws|ye|yt|yu|za|zm|zw)/)(?:[^\\s()<>{}\\[\\]]+|\\([^\\s()]*?\\([^\\s()]+\\)[^\\s()]*?\\)|\\([^\\s]+?\\))+(?:\\([^\\s()]*?\\([^\\s()]+\\)[^\\s()]*?\\)|\\([^\\s]+?\\)|[^\\s`!()\\[\\]{};:'\".,<>?«»“”‘’])|(?:(?<!@)[a-z0-9]+(?:[.\\-][a-z0-9]+)*[.](?:com|net|org|edu|gov|mil|aero|asia|biz|cat|coop|info|int|jobs|mobi|museum|name|post|pro|tel|travel|xxx|ac|ad|ae|af|ag|ai|al|am|an|ao|aq|ar|as|at|au|aw|ax|az|ba|bb|bd|be|bf|bg|bh|bi|bj|bm|bn|bo|br|bs|bt|bv|bw|by|bz|ca|cc|cd|cf|cg|ch|ci|ck|cl|cm|cn|co|cr|cs|cu|cv|cx|cy|cz|dd|de|dj|dk|dm|do|dz|ec|ee|eg|eh|er|es|et|eu|fi|fj|fk|fm|fo|fr|ga|gb|gd|ge|gf|gg|gh|gi|gl|gm|gn|gp|gq|gr|gs|gt|gu|gw|gy|hk|hm|hn|hr|ht|hu|id|ie|il|im|in|io|iq|ir|is|it|je|jm|jo|jp|ke|kg|kh|ki|km|kn|kp|kr|kw|ky|kz|la|lb|lc|li|lk|lr|ls|lt|lu|lv|ly|ma|mc|md|me|mg|mh|mk|ml|mm|mn|mo|mp|mq|mr|ms|mt|mu|mv|mw|mx|my|mz|na|nc|ne|nf|ng|ni|nl|no|np|nr|nu|nz|om|pa|pe|pf|pg|ph|pk|pl|pm|pn|pr|ps|pt|pw|py|qa|re|ro|rs|ru|rw|sa|sb|sc|sd|se|sg|sh|si|sj|Ja|sk|sl|sm|sn|so|sr|ss|st|su|sv|sx|sy|sz|tc|td|tf|tg|th|tj|tk|tl|tm|tn|to|tp|tr|tt|tv|tw|tz|ua|ug|uk|us|uy|uz|va|vc|ve|vg|vi|vn|vu|wf|ws|ye|yt|yu|za|zm|zw)\\b/?(?!@)))\n";
     private final String whisperRegex = "^(:\\S+[^!@\\s]+![^@\\s]+@\\S+) WHISPER \\S+ (:.*)$";
     private final String raffleStartRegex = "^A multi-raffle has begun, [0-9]+ points will be split among the winners. type !join to join the raffle! The raffle will end in [0-9]+ seconds";
     private final String raffleStartRegex2 = "^A raffle has begun for [0-9]+ points. type !join to join the raffle! The raffle will end in [0-9]+ seconds";
     private final String raffleResultRegex = "^The raffle has finished!.+\\b%s\\b.+won [0-9]+ points! PogChamp";
     private final String raffleResultRegex2 = "^(.+)?\\b%s\\b(.+)?won [0-9]+ points each!";
+    private final String twitchOnlyBingo = "^A bingo has started! Guess the right target to win [0-9]+ points! Only one target per message! Use TWITCH global emotes.";
+    private final String bttvOnlyBingo = "^A bingo has started! Guess the right target to win [0-9]+ points! Only one target per message! Use BTTV global emotes.";
+    private final String twitchAndBttvBingo = "^A bingo has started! Guess the right target to win [0-9]+ points! Only one target per message! Use BTTV and TWITCH global emotes.";
     private final String rouletteRegex = "^%s (won|lost) [0-9]+ points in roulette";
     private final String hsBetStart = "A new game has begun! Vote with !hsbet win/lose POINTS";
     private final String hsBetEnd = "The hearthstone betting has been closed! No longer accepting bets.";
-    private final String URL = "irc.twitch.tv";
     private final int PORT = 6667;
-    static MultiBotManager manager;
+    private static MultiBotManager manager;
     private PircBotX main;
-    static PircBotX whisper;
+    private static PircBotX whisper;
     private final Controller controller;
     private ArrayList<Long> lastUsed;
     private History history;
-    private ArrayList<String> shownLinks;
     private HashSet<String> shownMessages;
     private HashSet<String> botNames;
     private String color = "#6441A5";
     private boolean mod;
     private boolean sub;
     private Bet bet;
+    private Bingo bingo;
+    private Random r;
+    private boolean subMode;
 
     public Listener(Controller controller) {
         this.controller = controller;
     }
 
-    public void init(Config config) {
+    void init(Config config) {
+        r = new Random();
         botNames = new HashSet<>();
         // TODO temporary
         botNames.add("snusbot");
         botNames.add("pajbot");
         lastUsed = new ArrayList<>();
-        shownLinks = new ArrayList<>();
         shownMessages = new HashSet<>();
         Configuration.Builder configuration = new Configuration.Builder()
                 .setServerPassword(config.oauth)
@@ -79,20 +82,23 @@ public class Listener extends ListenerAdapter {
                 .setAutoReconnect(true)
                 .setAutoReconnectAttempts(99999)
                 .setAutoReconnectDelay(1000);
-        main = new PircBotX(configuration.buildForServer(URL, PORT));
+        Configuration.Builder configurationWithAutoJoin = new Configuration.Builder(configuration)
+                .addAutoJoinChannel("#" + controller.channelName);
+        String[] split = new Downloader().getServers(controller.channelName)[0].split(":");
+        main = new PircBotX(configurationWithAutoJoin.buildForServer(split[0], Integer.parseInt(split[1])));
         whisper = new PircBotX(configuration.buildForServer(GROUP_SERVERS[2], PORT));
         manager = new MultiBotManager();
         manager.addBot(main);
         manager.addBot(whisper);
     }
 
-    public void start() {
+    void start() {
         new Thread(() -> {
             manager.start();
         }).start();
     }
 
-    public void stop() {
+    void stop() {
         main.stopBotReconnect();
         whisper.stopBotReconnect();
         manager.stop();
@@ -112,10 +118,14 @@ public class Listener extends ListenerAdapter {
             username = displayName;
         }
         String message = event.getMessage();
-        mentions(username, message, mod, sub, color);
+        String[] split = message.toLowerCase().split(" ");
+        mentions(username, message, color, mod, sub);
         emotes(event.getTags(), message);
-        message(username, color, message, mod, sub);
-        bet(message);
+        message(username, message, color, mod, sub);
+        if (split[0].equalsIgnoreCase("!hsbet")) {
+            log.d(message, false);
+            bet(split);
+        }
     }
 
     @Override
@@ -133,22 +143,34 @@ public class Listener extends ListenerAdapter {
         String message = event.getMessage();
         String color = event.getTags().get("color");
         if (username != null && botNames.contains(username.toLowerCase())) {
-            raffle(event, message);
-            raffleWon(event, message);
-            checkRoulette(displayName, message, mod, sub, color);
-            checkBet(username, message, mod, sub, color);
-            checkDuel(username, message, color, mod, sub);
+            // TODO return boolean and do if/else
+            boolean done;
+            try {
+                done = raffle(event.getChannel(), username, message, color, mod, sub);
+                if (!done)
+                    done = raffleWon(event, message);
+                if (!done)
+                    done = checkRoulette(username, message, color, sub, mod);
+                if (!done)
+                    done = checkBet(username, message, color, mod, sub);
+                if (!done)
+                    done = checkDuel(username, message, color, mod, sub);
+                if (!done)
+                    checkBingo(username, message, color, mod, sub);
+            } catch (Exception e) {
+                log.e(e, true);
+            }
         }
-        if (!mentions(username, message, mod, sub, color)) {
-            message(username, color, message, mod, sub);
+        if (!mentions(username, message, color, mod, sub)) {
+            message(username, message, color, mod, sub);
         }
         emotes(event.getTags(), message);
     }
 
-    public void message(String username, String color, String message, boolean mod, boolean sub) {
+    private void message(String username, String message, String color, boolean mod, boolean sub) {
         if (controller.config.allMessages) {
             if (!filter(message)) {
-                controller.printMessage(username, "", message, botNames.contains(username.toLowerCase()), mod, sub, color);
+                controller.printMessage(username, "", message, color, mod, sub, botNames.contains(username.toLowerCase()));
                 shownMessages.add(message);
             }
         }
@@ -159,42 +181,43 @@ public class Listener extends ListenerAdapter {
                 (message.length() > 250 && getAsciiRatio(message) > 0.8) || getAsciiRatio(message) > 0.9);
     }
 
-    private void raffleWon(ActionEvent event, String message) {
+    private boolean raffleWon(ActionEvent event, String message) {
         if (checkWon(message, controller.config.name)) {
             int price = getPrice(message);
             if (!controller.config.mentions) {
-                controller.printMessage("", "", String.format("Congratulations, you won %s points in a raffle. PogChamp", price), false, false, false, color);
+                controller.printMessage("", "", String.format("Congratulations, you won %s points in a raffle. PogChamp", price), color, false, false, false);
             }
             if (controller.config.autoRoulette) {
                 sendMessage(event.getChannel(), String.format("!roulette %s", price));
             }
+            return true;
         }
+        return false;
     }
 
-    private void raffle(ActionEvent event, String message) {
+    private boolean raffle(Channel channel, String username, String message, String color, boolean mod, boolean sub) {
         if (checkStart(message)) {
             List<Integer> num = getNumbersWhitespace(message);
             if (controller.config.autoJoinRaffle && num.get(0) > 0) {
                 new Timer().schedule(new TimerTask() {
                     @Override
                     public void run() {
-                        sendMessage(event.getChannel(), getJoinString());
-                        if (message.contains("multi")) {
-                            new Raffle(true, num.get(0), num.get(1), controller).start();
-                            controller.printMessage("", "", String.format("Joining multi-raffle for %s points. The raffle ends in %s seconds.", num.get(0), num.get(1)), false, false, false, color);
-                        } else {
-                            new Raffle(false, num.get(0), num.get(1), controller).start();
-                            controller.printMessage("", "", String.format("Joining raffle for %s points. The raffle ends in %s seconds.", num.get(0), num.get(1)), false, false, false, color);
-                        }
+                        sendMessage(channel, getJoinString());
                     }
-                }, Math.min((num.get(1) * 1000) / 3, 19000));
+                }, (r.nextInt(num.get(1) / 2) + (num.get(1) / 4)) * 1000);
             }
+            new Raffle(true, num.get(0), num.get(1), controller).start();
+            controller.printMessage(username, "", message, color, mod, sub, botNames.contains(username.toLowerCase()));
+            return true;
         }
+        return false;
     }
 
-    private boolean mentions(String username, String message, boolean mod, boolean sub, String color) {
-        if (controller.config.mentions && message.toLowerCase().contains(controller.config.name.toLowerCase())) {
-            controller.printMessage(username, "", message, botNames.contains(username.toLowerCase()), mod, sub, color);
+    private boolean mentions(String username, String message, String color, boolean mod, boolean sub) {
+        Pattern p = Pattern.compile(String.format(controller.usernameRegex, controller.config.name));
+        Matcher m = p.matcher(message);
+        if (controller.config.mentions && m.find()) {
+            controller.printMessage(username, "", message, color, mod, sub, botNames.contains(username.toLowerCase()));
             return true;
         }
         return false;
@@ -226,61 +249,125 @@ public class Listener extends ListenerAdapter {
         return ret;
     }
 
-    private void checkBet(String username, String message, boolean mod, boolean sub, String color) {
+    private void checkBingo(String username, String message, String color, boolean mod, boolean sub) {
+        Pattern pattern = Pattern.compile(twitchOnlyBingo);
+        Matcher m = pattern.matcher(message);
+        // TODO only global
+        if (m.find()) {
+            bingo = new Bingo(controller.emotes, this);
+            bingo.start();
+            controller.printMessage(username, "", message, color, mod, sub, botNames.contains(username.toLowerCase()));
+            return;
+        }
+
+        Pattern pattern2 = Pattern.compile(twitchAndBttvBingo);
+        Matcher m2 = pattern2.matcher(message);
+        if (m2.find()) {
+            List<String> emotes = new ArrayList<>(controller.emotes);
+            controller.bttvEmotes.entrySet().stream().filter(e -> message.contains((String) e.getKey())).forEach(e -> emotes.add(e.getKey()));
+            bingo = new Bingo(emotes, this);
+            bingo.start();
+            controller.printMessage(username, "", message, color, mod, sub, botNames.contains(username.toLowerCase()));
+            return;
+        }
+
+        Pattern pattern3 = Pattern.compile(bttvOnlyBingo);
+        Matcher m3 = pattern3.matcher(message);
+        if (m3.find()) {
+            List<String> emotes = new ArrayList<>(controller.bttvEmotes.size());
+            controller.bttvEmotes.entrySet().stream().filter(e -> message.contains((String) e.getKey())).forEach(e -> emotes.add(e.getKey()));
+            bingo = new Bingo(emotes, this);
+            bingo.start();
+            controller.printMessage(username, "", message, color, mod, sub, botNames.contains(username.toLowerCase()));
+            return;
+        }
+
+        if (message.toLowerCase().contains("bingo cancelled by") || message.toLowerCase().contains("won the bingo!")) {
+            log.d("bingo done", false);
+            bingo.stop();
+            controller.printMessage(username, "", message, color, mod, sub, botNames.contains(username.toLowerCase()));
+        }
+    }
+
+    private boolean checkBet(String username, String message, String color, boolean mod, boolean sub) {
         if (message.contains(hsBetStart)) {
-            controller.printMessage(username, "", message, botNames.contains(username.toLowerCase()), mod, sub, color);
+            controller.printMessage(username, "", message, color, mod, sub, botNames.contains(username.toLowerCase()));
             bet = new Bet();
             bet.start();
             if (controller.config.betThreshold > 0 && controller.config.betChannels.toLowerCase().contains(controller.channelName.toLowerCase())) {
                 new Timer().schedule(new TimerTask() {
                     @Override
                     public void run() {
-                        if (bet.winRate() > controller.config.betThreshold) {
-                            sendMessage(String.format("!hsbet lose %s", controller.config.betAmount));
-                        } else if (bet.loseRate() > controller.config.betThreshold) {
-                            sendMessage(String.format("!hsbet win %s", controller.config.betAmount));
+                        if (bet.getTotalWinPoints() > controller.config.betAmount * 2 && bet.winRate() > controller.config.betThreshold) {
+                            int amount = bet.getTotalLosePoints() == 0 ? 1 : controller.config.betAmount;
+                            if (subMode) {
+                                whisper("snusbot", String.format("!hsbet lose %s", amount));
+                            } else {
+                                sendMessage(String.format("!hsbet lose %s", amount));
+                            }
+                            bet.lose(amount);
+                        } else if (bet.getTotalLosePoints() > controller.config.betAmount * 2 && bet.loseRate() > controller.config.betThreshold) {
+                            int amount = bet.getTotalWinPoints() == 0 ? 1 : controller.config.betAmount;
+                            if (subMode) {
+                                whisper("snusbot", String.format("!hsbet win %s", amount));
+                            } else {
+                                sendMessage(String.format("!hsbet win %s", amount));
+                            }
+                            bet.win(amount);
                         }
                     }
                 }, 57000);
+                return true;
             }
         } else if (message.contains(hsBetEnd)) {
-            controller.printMessage(username, "", message, botNames.contains(username.toLowerCase()), mod, sub, color);
+            controller.printMessage(username, "", message, color, mod, sub, botNames.contains(username.toLowerCase()));
             log.d(bet.toString(), false);
-            log.d(String.format("Expected winnings: %s points", (int) (controller.config.betAmount / (Math.min(bet.winRate(), bet.loseRate()) + controller.config.betAmount))
-                    * Math.max(bet.winRate(), bet.loseRate())), false);
+            int winnings = (int) (bet.getTotalWinPoints() >= bet.getTotalLosePoints() ?
+                    (controller.config.betAmount * (bet.getTotalWinPoints() / bet.getTotalLosePoints())) :
+                    (controller.config.betAmount * (bet.getTotalLosePoints() / bet.getTotalWinPoints())));
+            log.d(String.format("(Roughly) estimated winnings: %d points", winnings), false);
             bet.stop();
+            return true;
+        }
+        return false;
+    }
+
+    private void bet(String[] message) {
+        if (bet != null && bet.running && message.length >= 3) {
+            if (message[1].equalsIgnoreCase("win") || message[1].equalsIgnoreCase("winner")) {
+                List<Integer> num = getNumbers(message[2]);
+                if (num.get(0) > 0) {
+                    bet.win(num.get(0));
+                }
+//                log.r(bet.toString());
+            } else if (message[1].equalsIgnoreCase("lose") || message[1].equalsIgnoreCase("loss")
+                    || message[1].equalsIgnoreCase("loser") || message[1].equalsIgnoreCase("loose")) {
+                List<Integer> num = getNumbers(message[2]);
+                if (num.get(0) > 0) {
+                    bet.lose(num.get(0));
+                }
+//                log.r(bet.toString());
+            }
         }
     }
 
-    private void bet(String message) {
-        Pattern p = Pattern.compile("^!hsbet (win|winner)");
-        Matcher m = p.matcher(message.toLowerCase());
-        Pattern p2 = Pattern.compile("^!hsbet (lose|loss|loser|loose)");
-        Matcher m2 = p2.matcher(message.toLowerCase());
-        if (bet != null && bet.running && m.find()) {
-            List<Integer> num = getNumbers(message);
-            bet.win(num.get(0));
-            log.r(bet.toString());
-        } else if (bet != null && bet.running && m2.find()) {
-            List<Integer> num = getNumbers(message);
-            bet.lose(num.get(0));
-            log.r(bet.toString());
-        }
-    }
-
-    private void checkDuel(String sender, String message, String color, boolean mod, boolean sub) {
+    private boolean checkDuel(String sender, String message, String color, boolean mod, boolean sub) {
         if (message.toLowerCase().contains(String.format("%s won the duel vs", controller.config.name).toLowerCase()) ||
                 message.toLowerCase().contains(String.format("won the duel vs forsenGun %s", controller.config.name).toLowerCase())) {
-            controller.printMessage(sender, "", message, botNames.contains(sender.toLowerCase()), mod, sub, color);
+            controller.printMessage(sender, "", message, color, mod, sub, botNames.contains(sender.toLowerCase()));
+            return true;
         }
+        return false;
     }
 
-    private void checkRoulette(String sender, String message, boolean mod, boolean sub, String color) {
+    private boolean checkRoulette(String sender, String message, String color, boolean sub, boolean mod) {
         Pattern p = Pattern.compile(String.format(rouletteRegex, sender.toLowerCase()));
         Matcher m = p.matcher(message.toLowerCase());
         if (m.find()) {
-            controller.printMessage(sender, "", message, botNames.contains(sender.toLowerCase()), mod, sub, color);
+            controller.printMessage(sender, "", message, color, mod, sub, botNames.contains(sender.toLowerCase()));
+            return true;
         }
+        return false;
     }
 
     private List<Integer> getNumbersWhitespace(String s) {
@@ -319,11 +406,13 @@ public class Listener extends ListenerAdapter {
                 Timer timer = new Timer();
                 TimerTask action = new TimerTask() {
                     public void run() {
+                        controller.printMessage(controller.config.name, "", message, color, mod, sub, botNames.contains(controller.config.name.toLowerCase()));
                         channel.send().message(message);
                     }
                 };
                 timer.schedule(action, toWait);
             } else {
+                controller.printMessage(controller.config.name, "", message, color, mod, sub, botNames.contains(controller.config.name.toLowerCase()));
                 channel.send().message(message);
             }
         }
@@ -334,28 +423,29 @@ public class Listener extends ListenerAdapter {
         whisper.send().message(username, String.format("/w %s %s", username, message));
     }
 
-    public void sendMessage(String message) {
+    void sendMessage(String message) {
         long toWait = history.getTimeToWait();
         if (toWait > 0) {
             Timer timer = new Timer();
             TimerTask action = new TimerTask() {
                 public void run() {
-                    controller.printMessage(controller.config.name, "", message, botNames.contains(controller.config.name.toLowerCase()), mod, sub, color);
+                    controller.printMessage(controller.config.name, "", message, color, mod, sub, botNames.contains(controller.config.name.toLowerCase()));
                     main.send().message("#" + controller.channelName, message);
                 }
             };
             timer.schedule(action, toWait);
         } else {
-            controller.printMessage(controller.config.name, "", message, botNames.contains(controller.config.name.toLowerCase()), mod, sub, color);
+            controller.printMessage(controller.config.name, "", message, color, mod, sub, botNames.contains(controller.config.name.toLowerCase()));
             main.send().message("#" + controller.channelName, message);
         }
     }
 
-    public void sendMessageWithoutWait(String message) {
+    void sendMessageWithoutWait(String message) {
         main.send().message("#" + controller.channelName, message);
     }
 
     private boolean checkStart(String s) {
+        // todo change to contains?
         Pattern pattern = Pattern.compile(raffleStartRegex);
         Matcher m = pattern.matcher(s);
         Pattern pattern2 = Pattern.compile(raffleStartRegex2);
@@ -383,7 +473,7 @@ public class Listener extends ListenerAdapter {
 
     @Override
     public void onConnectAttemptFailed(ConnectAttemptFailedEvent event) throws Exception {
-        controller.printMessage("", "", "Failed to authenticate, probably wrong username/token.", false, false, false, controller.sysColor);
+        controller.printMessage("", "", "Failed to authenticate, probably wrong username/token.", controller.sysColor, false, false, false);
     }
 
     @Override
@@ -395,6 +485,8 @@ public class Listener extends ListenerAdapter {
 
     @Override
     public void onUnknown(UnknownEvent event) throws Exception {
+//        log.d(event.toString(), false);
+//        log.d(event.getTags().toString(), false);
         Map tags = event.getTags();
         String username = (String) tags.get("display-name");
         if (controller.config.name.equalsIgnoreCase(username)) {
@@ -411,12 +503,21 @@ public class Listener extends ListenerAdapter {
         Pattern p = Pattern.compile(whisperRegex);
         Matcher m = p.matcher(event.getLine());
         if (m.find() && (controller.config.whispers || botNames.contains(username.toLowerCase()))) {
-            log.d(event.getTags().toString(), false);
+//            log.d(event.getTags().toString(), false);
             String message = event.getLine().substring(event.getLine().indexOf(":", 1) + 1);
             String c = String.valueOf(tags.get("color"));
             String color = c != null && c.length() == 7 ? c : "#008000";
             boolean mod = event.getTags().get("user-type").contains("mod");
-            controller.printMessage(username, controller.config.name, message, botNames.contains(username.toLowerCase()), mod, false, color);
+            controller.printMessage(username, controller.config.name, message, color, mod, false, botNames.contains(username.toLowerCase()));
+        }
+        if (event.getLine().contains(":tmi.twitch.tv ROOMSTATE")) {
+            if (tags.get("subs-only").equals("1")) {
+                log.d("Sub only mode enabled", false);
+                subMode = true;
+            } else {
+                log.d("Sub only mode disabled", false);
+                subMode = false;
+            }
         }
     }
 
@@ -494,7 +595,7 @@ public class Listener extends ListenerAdapter {
         return n / msg.length();
     }
 
-    public History getHistory() {
+    History getHistory() {
         return history;
     }
 
@@ -502,11 +603,11 @@ public class Listener extends ListenerAdapter {
         return main;
     }
 
-    public void clearShownMessages() {
+    void clearShownMessages() {
         this.shownMessages = new HashSet<>();
     }
 
-    public String getColor() {
+    String getColor() {
         return color;
     }
 }

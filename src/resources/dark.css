@@ -63,6 +63,15 @@
     -fx-background-color: #1E1E1E;
 }
 
+.titled-pane > .title > .arrow-button {
+    -fx-background-color: null;
+}
+
+.titled-pane > .title > .arrow-button .arrow {
+    -fx-background-color: #D3D3D3;
+    -fx-shape: "M 0 0 h 7 l -3.5 4 z";
+}
+
 #rightPane {
     -fx-background-color: #282828;
     -fx-box-border: #141414;

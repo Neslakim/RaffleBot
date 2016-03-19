@@ -35,8 +35,9 @@ import java.util.regex.Pattern;
 public class Controller implements Initializable {
     public VBox rightPane;
     public HBox root;
-    private Log log = new Log("bot");
-    private final String urlRegex = "\\(?(?:(http|https):\\/\\/)?(?:((?:[^\\W\\s]|\\.|-|[:]{1})+)@{1})?((?:www.)?(?:[^\\W\\s]|\\.|-)+[\\.][^\\W\\s]{2,4}|localhost(?=\\/)|\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})(?::(\\d*))?([\\/]?[^\\s\\?]*[\\/]{1})*(?:\\/?([^\\s\\n\\?\\[\\]\\{\\}\\#]*(?:(?=\\.)){1}|[^\\s\\n\\?\\[\\]\\{\\}\\.\\#]*)?([\\.]{1}[^\\s\\?\\#]*)?)?(?:\\?{1}([^\\s\\n\\#\\[\\]]*))?([\\#][^\\s\\n]*)?\\)?";
+    private final Log log = new Log("bot");
+    private final String urlRegex = "^\\(?(?:(http|https)://)?(?:((?:[^\\W\\s]|\\.|-|[:]{1})+)@{1})?((?:www.)?(?:[^\\W\\s]|\\.|-)+[\\.][^\\W\\s]{2,4}|localhost(?=/)|\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3})(?::(\\d*))?([/]?[^\\s\\?]*[/]{1})*(?:/?([^\\s\\n\\?\\[\\]\\{\\}#]*(?:(?=\\.)){1}|[^\\s\\n\\?\\[\\]\\{\\}\\.#]*)?([\\.]{1}[^\\s\\?#]*)?)?(?:\\?{1}([^\\s\\n#\\[\\]]*))?([#][^\\s\\n]*)?\\)?";
+    final String usernameRegex = "(?i).*\\b%s\\b.*";
     private static final DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
     private Listener listener;
     @FXML
@@ -52,13 +53,9 @@ public class Controller implements Initializable {
     @FXML
     private FlowPane main;
     @FXML
-    private Button connect;
-    @FXML
     private Button connectChannel;
     @FXML
     private ScrollPane scroll;
-    @FXML
-    private Label connectionstatus;
     @FXML
     private TextField channelNameInput;
     @FXML
@@ -91,39 +88,57 @@ public class Controller implements Initializable {
     private CheckBox filter;
     private boolean connectedChannel;
     private Spam spam;
-    public Config config;
-    private List<String> emotes;
+    Config config;
+    List<String> emotes;
     private ImageView badge;
     private ImageView botBadge;
     private ImageView bcBadge;
     private ImageView modBadge;
     private Random r;
     private Stage overlayStage;
-    protected boolean overlay;
-    protected boolean bttvOverlay;
+    boolean overlay;
+    boolean bttvOverlay;
     private boolean alternate;
-    protected final String sysColor = "#008000";
-    public String channelName;
-    public HashMap<String, String> bttvEmotes;
+    final String sysColor = "#008000";
+    String channelName;
+    HashMap<String, String> bttvEmotes;
 
     @FXML
-    public void connect() {
-        if (config.validNameAndToken()) {
-            if (listener == null || !listener.getMain().isConnected()) {
-                printMessage("", "", "Connecting", false, false, false, sysColor);
-                listener = new Listener(this);
-                listener.init(config);
-                listener.start();
+    private void connectChannel() {
+        if (!connectedChannel) {
+            if (config.validNameAndToken()) {
+                channelName = channelNameInput.getText().toLowerCase();
+                if (listener == null || !listener.getMain().isConnected()) {
+                    printMessage("", "", "Connecting", sysColor, false, false, false);
+                    listener = new Listener(this);
+                    listener.init(config);
+                    listener.start();
+                    loadBadge();
+//                    listener.getMain().send().joinChannel("#" + channelName);
+                    new Thread(() -> {
+                        Downloader downloader = new Downloader();
+                        downloader.downloadBadge(channelName);
+                        downloader.downloadTwitchEmotes(channelName, 1);
+                        downloader.downloadTwitchEmotes(channelName, 3);
+                        downloader.downloadBTTVEmotes(channelName, 1);
+                        downloader.downloadBTTVEmotes(channelName, 3);
+                    }).start();
+                } else {
+                    printMessage("", "", "Disconnecting", sysColor, false, false, false);
+                    listener.stop();
+                }
             } else {
-                printMessage("", "", "Disconnecting", false, false, false, sysColor);
-                listener.stop();
+                printMessage("asd", "", "Invalid username or token", sysColor, false, false, false);
             }
+
         } else {
-            printMessage("asd", "", "Invalid username or token", false, false, false, sysColor);
+            if (listener != null && listener.getMain().isConnected()) {
+                listener.getMain().getUserChannelDao().getChannel("#" + channelName).send().part();
+            }
         }
     }
 
-    public synchronized void printMessage(String sender, String receiver, String message, boolean bot, boolean mod, boolean sub, String color) {
+    synchronized void printMessage(String sender, String receiver, String message, String color, boolean mod, boolean sub, boolean bot) {
         if (color == null || color.length() != 7) {
             color = getRandomColor();
         }
@@ -144,8 +159,10 @@ public class Controller implements Initializable {
                             CornerRadii.EMPTY,
                             BorderWidths.DEFAULT,
                             new Insets(0))));
-
-            if (message.toLowerCase().contains(config.name.toLowerCase())) {
+            Pattern p = Pattern.compile(String.format(usernameRegex, config.name));
+            Matcher m = p.matcher(message);
+            boolean mention = m.find();
+            if (mention) {
                 pane.setStyle("-fx-background-color: #8E0F0F");
             } else if (alternate) {
                 if (config.darkMode) {
@@ -179,14 +196,14 @@ public class Controller implements Initializable {
                 pane.getChildren().add(newBadge(badge));
             }
             if (sender.length() > 0) {
-                if (message.toLowerCase().contains(config.name.toLowerCase())) {
+                if (mention) {
                     pane.getChildren().add(createText(String.format(" %s", sender), "#D3D3D3", true));
                 } else {
                     pane.getChildren().add(createText(String.format(" %s", sender), finalColor, true));
                 }
                 if (receiver.length() > 0) {
                     pane.getChildren().add(createText(String.format(" %c ", 0x25B8), null, false));
-                    if (message.toLowerCase().contains(config.name.toLowerCase())) {
+                    if (mention) {
                         pane.getChildren().add(createText(String.format("%s", receiver), "#D3D3D3", true));
                     } else {
                         pane.getChildren().add(createText(String.format("%s", receiver), listener.getColor(), true));
@@ -225,7 +242,7 @@ public class Controller implements Initializable {
         });
     }
 
-    public boolean isUrl(String s) {
+    private boolean isUrl(String s) {
         Matcher m = Pattern.compile(urlRegex).matcher(s);
         return m.find();
     }
@@ -254,11 +271,11 @@ public class Controller implements Initializable {
         return text;
     }
 
-    public void updateRaffleText(String s) {
+    void updateRaffleText(String s) {
         Platform.runLater(() -> raffleText.setText(s));
     }
 
-    public void updateRaffleTime(int t) {
+    void updateRaffleTime(int t) {
         Platform.runLater(() -> {
             Label label = raffleTime;
             label.setText(String.valueOf(t));
@@ -278,61 +295,31 @@ public class Controller implements Initializable {
         config.setAutoJoinRaffle(c.selectedProperty().getValue());
     }
 
-    @FXML
-    public void connectChannel() {
-        if (!connectedChannel) {
-            channelName = channelNameInput.getText().toLowerCase();
-            if (listener != null && listener.getMain().isConnected()) {
-                loadBadge();
-                listener.getMain().send().joinChannel("#" + channelName);
-                new Thread(() -> {
-                    Downloader downloader = new Downloader();
-                    downloader.downloadBadge(channelName);
-                    downloader.downloadTwitchEmotes(channelName, 1);
-                    downloader.downloadTwitchEmotes(channelName, 3);
-                    downloader.downloadBTTVEmotes(channelName, 1);
-                    downloader.downloadBTTVEmotes(channelName, 3);
-                }).start();
-            } else {
-                printMessage("", "", "You need to be connected to the server first", false, false, false, sysColor);
-            }
-        } else {
-            if (listener != null && listener.getMain().isConnected()) {
-                listener.getMain().getUserChannelDao().getChannel("#" + channelName).send().part();
-            }
-        }
-    }
 
-    public void setConnectionStatus(boolean b) {
+    void setConnectionStatus(boolean b) {
         Platform.runLater(() -> {
             if (b) {
-                connectionstatus.setText("Connected");
-                connectionstatus.setAlignment(Pos.BASELINE_RIGHT);
-                connect.setText("Disconnect");
-                printMessage("", "", "Connected to server", false, false, false, sysColor);
+                printMessage("", "", "Connected to server", sysColor, false, false, false);
             } else {
-                connectionstatus.setText("Not connected");
-                connectionstatus.setAlignment(Pos.BASELINE_RIGHT);
-                connect.setText("Connect");
                 connectedChannel = false;
-                printMessage("", "", "Disconnected from server", false, false, false, sysColor);
+                printMessage("", "", "Disconnected from server", sysColor, false, false, false);
                 setChannelStatus(false);
                 spam.stop();
             }
         });
     }
 
-    public void setChannelStatus(boolean b) {
+    void setChannelStatus(boolean b) {
         Platform.runLater(() -> {
             channelContent.setDisable(!b);
             if (b) {
                 connectChannel.setText("Disconnect");
                 connectedChannel = true;
-                printMessage("", "", "Joined #" + channelName, false, false, false, sysColor);
+                printMessage("", "", "Joined #" + channelName, sysColor, false, false, false);
             } else {
                 connectChannel.setText("Connect");
                 connectedChannel = false;
-                printMessage("", "", "Left #" + channelName, false, false, false, sysColor);
+                printMessage("", "", "Left #" + channelName, sysColor, false, false, false);
             }
         });
     }
@@ -508,7 +495,7 @@ public class Controller implements Initializable {
         if (spam == null || !spam.running) {
             String s = textInput.getText();
             if (s != null && s.length() > 0) {
-                spam = new Spam(s, ".", listener, listener.getHistory());
+                spam = new Spam(s, ".", listener);
                 spamButton.setText("Stop");
                 spam.start();
             }
@@ -577,25 +564,23 @@ public class Controller implements Initializable {
 
     }
 
-    public void addEmotes(List<String> e) {
+    void addEmotes(List<String> e) {
         e.forEach(this::addTwitchEmote);
     }
 
-    public void addBTTVEmotes(String message) {
-        bttvEmotes.entrySet().stream().filter(e -> message.contains((String) e.getKey())).forEach(e -> {
-            addBTTVEmote(e.getKey());
-        });
+    void addBTTVEmotes(String message) {
+        bttvEmotes.entrySet().stream().filter(e -> message.contains((String) e.getKey())).forEach(e -> addBTTVEmote(e.getKey()));
     }
 
-    public void addTwitchEmote(String name) {
+    private void addTwitchEmote(String name) {
         addEmote(new File(String.format("emotes/3x/%s.png", name)));
     }
 
-    public void addBTTVEmote(String name) {
+    private void addBTTVEmote(String name) {
         addEmote(new File("emotes/bttv/3x/" + bttvEmotes.get(name)));
     }
 
-    public void addEmote(File file) {
+    private void addEmote(File file) {
         try {
             ImageView imageView = new ImageView(file.toURI().toString());
             imageView.setMouseTransparent(true);
@@ -605,7 +590,7 @@ public class Controller implements Initializable {
         }
     }
 
-    public void addImageView(ImageView imageView) {
+    private void addImageView(ImageView imageView) {
         Platform.runLater(() -> {
             Rectangle2D primScreenBounds = Screen.getPrimary().getVisualBounds();
             imageView.setX(r.nextInt((int) (primScreenBounds.getWidth() - imageView.getImage().getWidth())));
@@ -620,11 +605,11 @@ public class Controller implements Initializable {
         });
     }
 
-    public void removeImageView(ImageView imageView) {
+    private void removeImageView(ImageView imageView) {
         Platform.runLater(() -> overlayPane.getChildren().remove(imageView));
     }
 
-    public void downloadGlobalEmotes() {
+    private void downloadGlobalEmotes() {
         new Thread(() -> {
             Downloader downloader = new Downloader();
             downloader.downloadTwitchEmotes(1);
@@ -684,10 +669,10 @@ public class Controller implements Initializable {
         config.setWhispers(cb.isSelected());
     }
 
-    String[] colorValues = {"#FF0000", "#0000FF", "#008000", "#B22222", "#FF7F50", "#9ACD32", "#FF4500", "#2E8B57",
+    private final String[] colorValues = {"#FF0000", "#0000FF", "#008000", "#B22222", "#FF7F50", "#9ACD32", "#FF4500", "#2E8B57",
             "#DAA520", "#D2691E", "#5F9EA0", "#1E90FF", "#FF69B4", "#8A2BE2", "#00FF7F"};
 
-    public String getRandomColor() {
+    private String getRandomColor() {
         return colorValues[r.nextInt(colorValues.length)];
     }
 
@@ -711,7 +696,7 @@ public class Controller implements Initializable {
                 Text text = (Text) node2;
                 if (first[0]) {
                     first[0] = false;
-                } else {
+                } else if (!text.getStyle().contains("bold")) {
                     if (config.darkMode) {
                         text.setFill(Color.valueOf("#D3D3D3"));
                     } else {

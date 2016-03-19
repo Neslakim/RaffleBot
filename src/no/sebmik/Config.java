@@ -1,29 +1,39 @@
 package no.sebmik;
 
 import java.io.*;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.Properties;
 
 public class Config {
-    Log log = new Log(getClass().getSimpleName());
+    private final Log log = new Log(getClass().getSimpleName());
     private static final String filename = "bot.cfg";
     public String name;
-    public String oauth;
-    public boolean autoRoulette;
-    public boolean autoJoinRaffle;
-    public boolean showLinks;
-    public boolean mentions;
-    public boolean allMessages;
-    public boolean filter;
-    public Integer scrollBack;
-    public boolean darkMode;
-    public boolean whispers;
-    public int betThreshold;
-    public int betAmount;
-    public String betChannels;
+    String oauth;
+    boolean autoRoulette;
+    boolean autoJoinRaffle;
+    boolean mentions;
+    boolean allMessages;
+    boolean filter;
+    Integer scrollBack;
+    boolean darkMode;
+    boolean whispers;
+    int betThreshold;
+    int betAmount;
+    String betChannels;
+    File file;
 
-    public Config() {
-        File f = new File(filename);
-        if (f.exists() && !f.isDirectory()) {
+    Config() {
+        file = null;
+
+        try {
+            String url = getClass().getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
+            String s = url.substring(0, url.lastIndexOf("/"));
+            file = new File(String.format("%s/%s", s, filename));
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+        if (file.exists() && !file.isDirectory()) {
             load();
         }
     }
@@ -35,7 +45,6 @@ public class Config {
             p.setProperty("oauth", oauth != null ? oauth : "");
             p.setProperty("auto-roulette", String.valueOf(autoRoulette));
             p.setProperty("auto-join-raffle", String.valueOf(autoJoinRaffle));
-            p.setProperty("show-links", String.valueOf(showLinks));
             p.setProperty("mentions", String.valueOf(mentions));
             p.setProperty("all-messages", String.valueOf(allMessages));
             p.setProperty("scrollback", String.valueOf(scrollBack != null && scrollBack > 0 ? scrollBack : 150));
@@ -45,7 +54,7 @@ public class Config {
             p.setProperty("bet-threshold", String.valueOf(betThreshold));
             p.setProperty("bet-amount", String.valueOf(betAmount));
             p.setProperty("bet-channels", String.valueOf(betChannels));
-            p.store(new FileWriter(filename), null);
+            p.store(new FileWriter(file), null);
         } catch (IOException e) {
             log.e(e.toString(), true);
         }
@@ -53,13 +62,12 @@ public class Config {
 
     private void load() {
         Properties p = new Properties();
-        try (InputStream i = new FileInputStream(filename)) {
+        try (InputStream i = new FileInputStream(file)) {
             p.load(i);
             name = p.getProperty("botname");
             oauth = p.getProperty("oauth");
             autoRoulette = Boolean.parseBoolean(p.getProperty("auto-roulette"));
             autoJoinRaffle = Boolean.parseBoolean(p.getProperty("auto-join-raffle"));
-            showLinks = Boolean.parseBoolean(p.getProperty("show-links"));
             mentions = Boolean.parseBoolean(p.getProperty("mentions"));
             allMessages = Boolean.parseBoolean(p.getProperty("all-messages"));
             scrollBack = Integer.parseInt(p.getProperty("scrollback"));
@@ -83,31 +91,25 @@ public class Config {
         save();
     }
 
-    public void setOauth(String oauth) {
+    void setOauth(String oauth) {
         log.d("Setting Oauth: " + oauth, false);
         this.oauth = oauth;
         save();
     }
 
-    public void setAutoRoulette(boolean b) {
+    void setAutoRoulette(boolean b) {
         log.d("Setting AutoRoulette: " + b, false);
         this.autoRoulette = b;
         save();
     }
 
-    public void setAutoJoinRaffle(boolean b) {
+    void setAutoJoinRaffle(boolean b) {
         this.autoJoinRaffle = b;
         log.d("Setting AutoJoinRaffle: " + b, false);
         save();
     }
 
-    public void setShowLinks(boolean b) {
-        log.d("Setting ShowLinks: " + b, false);
-        this.showLinks = b;
-        save();
-    }
-
-    public void setAllMessages(boolean b) {
+    void setAllMessages(boolean b) {
         log.d("Setting AllMessage: " + b, false);
         this.allMessages = b;
         save();
@@ -119,29 +121,29 @@ public class Config {
         save();
     }
 
-    public void setFilter(boolean b) {
+    void setFilter(boolean b) {
         log.d("Setting Filter: " + b, false);
         this.filter = b;
         save();
     }
 
-    public void setDarkMode(boolean b) {
+    void setDarkMode(boolean b) {
         log.d("Setting DarkMode: " + b, false);
         this.darkMode = b;
         save();
     }
 
-    public boolean validNameAndToken() {
+    boolean validNameAndToken() {
         return name.length() > 0 && oauth.length() == 36 && oauth.contains("oauth:");
     }
 
-    public void setMentions(boolean mentions) {
+    void setMentions(boolean mentions) {
         log.d("Setting Mentions: " + mentions, false);
         this.mentions = mentions;
         save();
     }
 
-    public void setWhispers(boolean whispers) {
+    void setWhispers(boolean whispers) {
         log.d("Setting Whispers: " + whispers, false);
         this.whispers = whispers;
         save();
